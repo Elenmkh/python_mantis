@@ -23,7 +23,7 @@ def app(request, config):
     global fixture
     browser = request.config.getoption("--browser")
     if fixture is None or not fixture.is_valid():
-        fixture = Application(browser=browser, base_url=config['web']["baseURL"])
+        fixture = Application(browser=browser, config=config)
     return fixture
 
 @pytest.fixture(scope="session")
@@ -34,7 +34,7 @@ def config(request):
 def configure_server(request, config):
     install_server_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
     def fin():
-        restore_install_server_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
+        restore_server_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
     request.addfinalizer(fin)
 
 def install_server_configuration(host, username, password):
@@ -45,7 +45,7 @@ def install_server_configuration(host, username, password):
             remote.rename("config_inc.php", "config_inc.php.bak")
         remote.upload(os.path.join(os.path.dirname(__file__), "resources/config_inc.php"), "config_inc.php")
 
-def restore_install_server_configuration(host, username, password):
+def restore_server_configuration(host, username, password):
     with ftputil.FTPHost(host, username, password) as remote:
         if remote.path.isfile("config_inc.php.bak"):
             if remote.path.isfile("config_inc.php"):
