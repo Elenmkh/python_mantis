@@ -65,7 +65,7 @@ class ProjectHelper():
     def delete_project_by_index(self, index):
         wd = self.app.wd
         self.open_project_page()
-        wd.find_elements_by_css_selector('[href^="manage_proj_edit_page"]')[index].click()
+        wd.find_element_by_css_selector(f'[href$="project_id={index}"]').click()
         wd.find_element_by_css_selector('[value="Delete Project"]').click()
         wd.find_element_by_css_selector('[value="Delete Project"]').click()
 
